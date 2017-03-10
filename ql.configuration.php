@@ -8,9 +8,9 @@ if(startsWith(gethostname(), "emadmessiha-php")){
 }else{
     //live settings
     $DB_SERVERNAME = "localhost";
-    $DB_USERNAME = "rd-emad";
-    $DB_PASSWORD = "rd-emad";
-    $DB_DBNAME = "rd-expenses";
+    $DB_USERNAME = "emadmessiha";
+    $DB_PASSWORD = "";
+    $DB_DBNAME = "c9";
 }
 
 function startsWith($haystack, $needle)
