@@ -1,2 +1,2 @@
 # querylogic
-A simple PHP library for interacting with database
+A simple PHP library for interacting with MySql database

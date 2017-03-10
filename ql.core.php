@@ -17,7 +17,7 @@ class MySqlQuery{
             default:
                 $this->_throwException(": cannot create object with type '".$queryType."'. 
                 Valid arguments are 'SELECT', 'INSERT', 'UPDATE', or 'DELETE'.
-                Tip: consider using properties MySqlQueryType");
+                Tip: consider using properties from MySqlQueryType");
                 break;
         }
     }
