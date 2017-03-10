@@ -1,5 +1,5 @@
 <?php
-if(startsWith(gethostname(), "emadmessiha-php")){
+if(stringStartsWith(gethostname(), "emadmessiha-php")){
     //development settings
     $DB_SERVERNAME = "localhost";
     $DB_USERNAME = "emadmessiha";
@@ -13,13 +13,13 @@ if(startsWith(gethostname(), "emadmessiha-php")){
     $DB_DBNAME = "c9";
 }
 
-function startsWith($haystack, $needle)
+function stringStartsWith($haystack, $needle)
 {
      $length = strlen($needle);
      return (substr($haystack, 0, $length) === $needle);
 }
 
-function endsWith($haystack, $needle)
+function stringEndsWith($haystack, $needle)
 {
     $length = strlen($needle);
     if ($length == 0) {
