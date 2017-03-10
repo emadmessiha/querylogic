@@ -2,16 +2,16 @@
 class MySqlQuery{
     public static function init($queryType) {
         switch($queryType){
-            case MySqlQueryType::$SELECT:
+            case MySqlQueryType::SELECT:
                 return new MySqlSelect();
                 break;
-            case MySqlQueryType::$INSERT:
+            case MySqlQueryType::INSERT:
                 return new MySqlInsert();
                 break;
-            case MySqlQueryType::$UPDATE:
+            case MySqlQueryType::UPDATE:
                 return new MySqlUpdate();
                 break;
-            case MySqlQueryType::$DELETE:
+            case MySqlQueryType::DELETE:
                 return new MySqlDelete();
                 break;
             default:
@@ -45,7 +45,7 @@ class MySqlSelect extends MySqlQuery
 			if(is_array($columns))
 			{
 				$this->cols = array_merge($this->cols,$columns);
-			}else if($columns instanceOf string){
+			}else if(is_string($columns)){
 				array_push($this->cols,$columns);
 			}else{
 			    parent::_throwException("[SELECT]: columns must be an instance 
@@ -110,7 +110,7 @@ class MySqlInsert extends MySqlQuery
 			if(is_array($columns))
 			{
 				$this->cols = array_merge($this->cols,$columns);
-			}else if($columns instanceOf string){
+			}else if(is_string($columns)){
 				array_push($this->cols,$columns);
 			}else{
 			    parent::_throwException("[INSERT]: columns must be an instance
@@ -175,14 +175,14 @@ class MySqlUpdate extends MySqlQuery
 }
 class MySqlOperand
 {
-	public static $AND='AND';
-	public static $OR='OR';
+	const _AND='AND';
+	const _OR='OR';
 }
 class MySqlQueryType
 {
-	public static $SELECT='SELECT';
-	public static $DELETE='DELETE';
-	public static $INSERT='INSERT';
-	public static $UPDATE='UPDATE';
+	const SELECT='SELECT';
+	const DELETE='DELETE';
+	const INSERT='INSERT';
+	const UPDATE='UPDATE';
 }
 ?>

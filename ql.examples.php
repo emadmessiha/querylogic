@@ -20,7 +20,7 @@ see examples below using QueryLogic core classes
 
 
 ////////////// Inserting data //////////////
-$insert = MySqlQuery::init(MySqlQueryType::$INSERT);
+$insert = MySqlQuery::init(MySqlQueryType::INSERT);
 $insert->INTO("querylogictest");
 $insert->COLUMNS(["record_name","record_valid"]);
 $insert->ADD_ROW(["first row","0"]);
@@ -39,7 +39,7 @@ echo "Last Inserted ID: ".$queryLogic->GetLastInsertId()."<br/><br/>";
 
 
 ////////////// Selecting data //////////////
-$select = MySqlQuery::init(MySqlQueryType::$SELECT);
+$select = MySqlQuery::init(MySqlQueryType::SELECT);
 $select->FROM("querylogictest");
 $select->COLUMNS(["record_id","record_name","record_valid"]);
 
@@ -53,7 +53,7 @@ echo "<br/><br/>";
 
 
 ////////////// Updating data //////////////
-$update = MySqlQuery::init(MySqlQueryType::$UPDATE);
+$update = MySqlQuery::init(MySqlQueryType::UPDATE);
 $update->TABLE("querylogictest");
 $update->ADD_COLUMN_VALUE_PAIR("record_valid",1);
 $update->ADD_CONDITION("record_id=1");
@@ -68,7 +68,7 @@ echo "<br/><br/>";
 
 
 ////////////// Deleting data //////////////
-$delete = MySqlQuery::init(MySqlQueryType::$DELETE);
+$delete = MySqlQuery::init(MySqlQueryType::DELETE);
 $delete->FROM("querylogictest");
 $delete->ADD_CONDITION("record_id=1");
 
@@ -89,14 +89,14 @@ To execute a transaction, simply add more statements to your
 QueryLogic object
 */
 
-$updateA = MySqlQuery::init(MySqlQueryType::$UPDATE);
+$updateA = MySqlQuery::init(MySqlQueryType::UPDATE);
 $updateA->TABLE("querylogictest");
 $updateA->ADD_COLUMN_VALUE_PAIR("record_valid",true);
 $updateA->ADD_COLUMN_VALUE_PAIR("record_name","second row edit");
 $updateA->ADD_CONDITION("record_id=2");
 $queryLogic->AddStatement($updateA);
 
-$insertA = MySqlQuery::init(MySqlQueryType::$INSERT);
+$insertA = MySqlQuery::init(MySqlQueryType::INSERT);
 $insertA->INTO("querylogictest");
 $insertA->COLUMNS(["record_name","record_valid"]);
 $insertA->ADD_ROW(["forth row is here",0]);
