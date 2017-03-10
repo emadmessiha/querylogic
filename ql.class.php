@@ -11,48 +11,112 @@ class QueryLogic {
       $DB_DBNAME
     */
     private $_queries = [];
+    private $_lastInsertId = 0;
+    private $_errors = "";
     
     function __construct() {
         
     }
     
     public function AddStatement($statement){
-      if($statement instanceof MySqlQuery){
-        $_queries[] = $statement->toString();
-      }else if($statement instanceof string){
-        $_queries[] = $statement;
+      if(is_subclass_of($statement,'MySqlQuery')){
+        $this->_queries[] = $statement->toString();
+      }else if(is_string($statement)){
+        $this->_queries[] = str_replace(';','',$statement);
       }else{
-        self::_throwException("parameter 'statement' must be a string or instance of MySqlQuery.");
+        self::_throwQLException(
+          "parameter 'statement' must be a string or instance of MySqlQuery.
+          '".gettype($statement)."' was provided instead.");
       }
     }
     
-    private function _runQuery($q){
+    public function HasMultipleStatements(){
+      return (count($this->_queries) > 1);
+    }
+    
+    public function IsEmpty(){
+      return (count($this->_queries) == 0);
+    }
+    
+    public function ToString(){
+      if(!(is_null($this->_queries) || empty($this->_queries))) {
+            if(!is_array($this->_queries))
+            {
+              self::_throwException("Something went wrong, 'statements' in
+              QueryLogic object should be array, but is not.");
+            }else{
+              if($this->HasMultipleStatements()){
+                $string = "START TRANSACTION; " 
+                  . join(";",$this->_queries) 
+                  . "; COMMIT;";
+              }else{
+                $string = $this->_queries[0].";";
+              }
+              
+            	return $string;
+            }
+        }
+    }
+    
+    public function Run(){
+        $this->_errors = "";
         $results;
         // Connect
-        $link = mysql_connect($DB_SERVERNAME, $DB_USERNAME, $DB_PASSWORD)
-            OR die(mysql_error());
-        mysql_select_db($DB_DBNAME,$link);
+        $conn = self::_getConnection();
         
-        $results = mysql_query($q, $link);
-        
-        if(!$results){
-        	echo mysql_error();
+        if($this->HasMultipleStatements()){
+          $conn->begin_transaction(MYSQLI_TRANS_START_READ_ONLY);
+          foreach ($this->_queries as $qu){
+            $conn->query($qu);
+          }
+          $results = $conn->commit();
+        }else{
+          $results = $conn->query($this->ToString());
         }
         
-        mysql_close($link);
+        if(!$results){
+        	$this->_errors = $conn->error;
+        }else{
+          if(!is_bool($results)){
+            $return_results = [];
+            while ($row = $results->fetch_assoc()) {
+                $return_results[] = $row;
+            }
+            $results = $return_results;
+          }
+        }
+        $this->_lastInsertId = $conn->insert_id;
+        $conn->close();
+        $this->_queries = [];// reseting query logic object
         return $results;
     }
     
-    private function Query(){
-        if(!(is_null($this->_queries) || empty($this->_queries))) {
-            if(!is_array($this->_queries))
-            {
-              self::_throwException("parameter 'queries' must be an array of string queries.");
-            }else{
-              $r = self::_runQuery("START TRANSACTION;" . join(";",$this->_queries) . "; COMMIT;");
-            	return $r;
-            }
-        }
+    
+    public function GetLastInsertId(){
+      return $this->_lastInsertId;
+    }
+    
+    public function GetErrors(){
+      return $this->_errors;
+    }
+    
+    
+    private function _throwQLException($message){
+      throw new Exception("QueryLogic Error: ".$message);
+    }
+    
+    private function _getConnection(){
+      $conn = new mysqli(
+        $GLOBALS["DB_SERVERNAME"], 
+        $GLOBALS["DB_USERNAME"], 
+        $GLOBALS["DB_PASSWORD"], 
+        $GLOBALS["DB_DBNAME"]);
+      // Check connection
+      if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+      }else{
+        return $conn;
+      }
     }
 }
 ?>
